@@ -22,7 +22,11 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".DetailsActivity"></activity>
+        <activity android:name=".DetailsActivity" />
+        <activity
+            android:name=".NewActivity"
+            android:label="@string/title_activity_new"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

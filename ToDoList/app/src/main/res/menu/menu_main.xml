@@ -4,7 +4,8 @@
     tools:context="com.example.tristanglaes.todolist.MainActivity">
     <item
         android:id="@+id/newToDo"
-        android:title="@string/newToDo" />
+        android:title="@string/newToDo"
+        android:onClick="newDoTo"/>
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

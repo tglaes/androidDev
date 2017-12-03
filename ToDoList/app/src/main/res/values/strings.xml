@@ -62,6 +62,12 @@
         <item>3</item>
     </string-array>
 
+    <string-array name="to_do_list_prio">
+        <item>High</item>
+        <item>Middle</item>
+        <item>Low</item>
+    </string-array>
+
     <string-array name="multi_select_list_preference_default_value" />
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
@@ -78,4 +84,6 @@
     <string name="tvToDoString" />
     <string name="applyBtn">Apply</string>
     <string name="cancelBtn">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="title_activity_new">NewActivity</string>
 </resources>
