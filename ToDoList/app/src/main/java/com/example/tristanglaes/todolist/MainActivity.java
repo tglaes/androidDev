@@ -36,20 +36,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*/adapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_list_item_1); // des Adapters
-        for (int i = 0; i < toDoList.length; i++) {
-            adapter.add(toDoList[i]);
-        }*/
         final MainActivity ma = this;
 
-        adapter = new ArrayAdapter<ToDoEntry>(this, android.R.layout.simple_list_item_1);
-        adapter.add(new ToDoEntry("Tristan ist der Beste", Priority.low, "Jo isser"));
-        adapter.add(new ToDoEntry("Jurie ist der Beste", Priority.high, "Ist er nicht"));
-        adapter.add(new ToDoEntry("Meris ist klasse!", Priority.middle, "Test"));
-
-        adapter.sort(new ToDoEntry("Tristan ist der Beste", Priority.high, "Jo isser"));
-
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         toDoListView = findViewById(R.id.toDoList);
         toDoListView.setAdapter(adapter);
 
@@ -98,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
             } else if(resultCode == RESULT_CANCELED){
                 return;
             }
-
         }
     }
 
@@ -130,5 +118,10 @@ public class MainActivity extends AppCompatActivity {
     public void newDoTo(MenuItem item) {
         Intent intent = new Intent(this, NewActivity.class);
         startActivityForResult(intent, REQUEST_CODE_NEW_TO_DO);
+    }
+
+    public void showSettings(MenuItem item) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 }
