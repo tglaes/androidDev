@@ -1,8 +1,6 @@
 package com.example.tristanglaes.a2048;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -33,12 +31,6 @@ public class MenuActivity extends AppCompatActivity {
         highscoresBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MenuActivity.this);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString(HighscoreActivity.HIGH_SCORE_KEY + 1,"1234567");
-                editor.putString(HighscoreActivity.HIGH_SCORE_KEY + 2,"1000000");
-                editor.apply();
-
                 Intent i = new Intent(MenuActivity.this, HighscoreActivity.class);
                 startActivity(i);
             }

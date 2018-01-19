@@ -1,49 +1,189 @@
 package com.example.tristanglaes.a2048;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
 
+    private GridView gv;
+    private ArrayAdapter<String> adapter;
     private int board[][];
     private int numberMoves;
-    private int width = 4;
-    private int height = 4;
-    private int points = 0;
-    private SimpleDateFormat time;
+    private int width;
+    private int height;
+    private int points;
+    private String time;
     private MoveDirection move;
+    private TextView pointsTv, movesTv,timeTv;
+    private static String GAME_BOARD_KEY = "com.example.tristanglaes.a2048.GAMEBOARD";
+    private static String GAME_TIME_KEY = "com.example.tristanglaes.a2048.TIME";
+    private static String GAME_MOVES_KEY = "com.example.tristanglaes.a2048.MOVES";
+    private static String GAME_POINTS_KEY = "com.example.tristanglaes.a2048.POINTS";
+    private static String GAME_STORED_KEY = "com.example.tristanglaes.a2048.STORED";
     Random rand;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        board = new int[4][4];
+        width = 4;
+        height = 4;
+        time = "0:00";
+        gv = findViewById(R.id.gameBoard);
+        gv.setOnTouchListener(new View.OnTouchListener() {
+
+            private final GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
+
+
+            final class GestureListener extends GestureDetector.SimpleOnGestureListener {
+
+                private static final int SWIPE_THRESHOLD = 100;
+                private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+                @Override
+                public boolean onDown(MotionEvent e) {
+                    return true;
+                }
+
+                @Override
+                public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                    boolean result = false;
+                    try {
+                        float diffY = e2.getY() - e1.getY();
+                        float diffX = e2.getX() - e1.getX();
+                        if (Math.abs(diffX) > Math.abs(diffY)) {
+                            if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                                if (diffX > 0) {
+                                    onSwipeRight();
+                                } else {
+                                    onSwipeLeft();
+                                }
+                                result = true;
+                            }
+                        } else if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                            if (diffY > 0) {
+                                onSwipeBottom();
+                            } else {
+                                onSwipeTop();
+                            }
+                            result = true;
+                        }
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                    }
+                    return result;
+                }
+            }
+
+            public void onSwipeRight() {
+                if(isMovePossible(MoveDirection.EAST)){
+                    performMove(MoveDirection.EAST);
+                    checkGame();
+                }
+            }
+
+            public void onSwipeLeft() {
+                if(isMovePossible(MoveDirection.WEST)){
+                    performMove(MoveDirection.WEST);
+                    checkGame();
+                }
+            }
+
+            public void onSwipeTop() {
+                if(isMovePossible(MoveDirection.NORTH)){
+                    performMove(MoveDirection.NORTH);
+                    checkGame();
+                }
+            }
+
+            public void onSwipeBottom() {
+                if(isMovePossible(MoveDirection.SOUTH)){
+                    performMove(MoveDirection.SOUTH);
+                    checkGame();
+                }
+            }
+
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return gestureDetector.onTouchEvent(motionEvent);
+            }
+        });
+        pointsTv = findViewById(R.id.pointsTextView);
+        movesTv = findViewById(R.id.movesTextView);
+        timeTv = findViewById(R.id.timeTextView);
+        rand = new Random();
+        initGame();
+    }
+
+    public void checkGame(){
+        if(!isMovePossible()){
+            Toast toast = Toast.makeText(getApplicationContext(), "YOU LOST!", Toast.LENGTH_LONG);
+            toast.show();
+        } else {
+            addPiece();
+            updateBoard(board);
+        }
     }
 
 
+    @Override
+    protected void onStop(){
+        super.onStop();
+        safeGame();
+    }
+
     /**
-     * Game loop
+     *
+     * @param board
      */
-    private void run(){
+    private void updateBoard(int board[][]){
+        adapter = new ArrayAdapter<>(GameActivity.this, R.layout.support_simple_spinner_dropdown_item);
+        List<String> boardList = new ArrayList<>();
 
-        while(isMovePossible()){
-            //getMove();
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                boardList.add(String.valueOf(board[j][i]));
+            }
         }
-
+        adapter.addAll(boardList);
+        gv.setAdapter(adapter);
+        pointsTv.setText(String.valueOf(points));
+        movesTv.setText(String.valueOf(numberMoves));
+        timeTv.setText(time);
     }
 
     /**
      * Lädt oder erstellt ein neues Spiel
      */
     private void initGame(){
-        board = new int[4][4];
-        numberMoves = 0;
-        points = 0;
-        time = new SimpleDateFormat("mm:ss");
+
+        //if(PreferenceManager.getDefaultSharedPreferences(GameActivity.this).getBoolean(GAME_STORED_KEY, false)){
+            //loadGame();
+        //} else {
+            numberMoves = 0;
+            points = 0;
+            time = "0:00";
+            initBoardPieces();
+            updateBoard(board);
+        //}
     }
 
     /**
@@ -451,5 +591,36 @@ public class GameActivity extends AppCompatActivity {
 
     public void setPieceAt(int x, int y, int piece) {
         board[x][y] = piece;
+    }
+
+    /**
+     * Speichert den Spielstand in den SharedPreferences
+     */
+    private void safeGame(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
+        SharedPreferences.Editor editor = preferences.edit();
+        for (int i = 0; i < height; i++){
+            for (int j=0; j<width; j++){
+                editor.putInt(GAME_BOARD_KEY + i + j, getPieceAt(i,j));
+            }
+        }
+
+        editor.putInt(GAME_MOVES_KEY, numberMoves);
+        editor.putInt(GAME_POINTS_KEY, points);
+        editor.putString(GAME_TIME_KEY, time.toString());
+        editor.putBoolean(GAME_STORED_KEY, true);
+        editor.apply();
+    }
+
+    private void loadGame() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
+        for (int i = 0; i < height; i++){
+            for (int j=0; j<width; j++){
+                board[i][j] = preferences.getInt(GAME_BOARD_KEY + i + j,0);
+            }
+        }
+        numberMoves = preferences.getInt(GAME_MOVES_KEY,0);
+        points = preferences.getInt(GAME_POINTS_KEY,0);
+        time = preferences.getString(GAME_TIME_KEY,"0");
     }
 }

@@ -4,6 +4,9 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.time.Duration;
@@ -15,11 +18,17 @@ public class HighscoreActivity extends AppCompatActivity {
     private SharedPreferences sp;
     public static String HIGH_SCORE_KEY = "com.example.tristanglaes.a2048.HIGHSCORE";
     private List<String> highscores;
+    private ListView highscoreListView;
+    private ArrayAdapter<String> adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_highscore);
+
+        highscoreListView = findViewById(R.id.highscoreListView);
+        adapter = new ArrayAdapter<>(HighscoreActivity.this, R.layout.support_simple_spinner_dropdown_item);
 
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         highscores = new ArrayList<>();
@@ -30,11 +39,10 @@ public class HighscoreActivity extends AppCompatActivity {
             if(score.equals("")){
                 break;
             } else {
-                highscores.add(score);
+                highscores.add( i + ". " + score);
             }
         }
-
-        Toast toast = Toast.makeText(getApplicationContext(), highscores.toString(), Toast.LENGTH_LONG);
-        toast.show();
+        adapter.addAll(highscores);
+        highscoreListView.setAdapter(adapter);
     }
 }
