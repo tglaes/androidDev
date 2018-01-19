@@ -9,6 +9,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ public class GameActivity extends AppCompatActivity {
     private String time;
     private MoveDirection move;
     private TextView pointsTv, movesTv,timeTv;
+    private Button newGameBtn;
     private static String GAME_BOARD_KEY = "com.example.tristanglaes.a2048.GAMEBOARD";
     private static String GAME_TIME_KEY = "com.example.tristanglaes.a2048.TIME";
     private static String GAME_MOVES_KEY = "com.example.tristanglaes.a2048.MOVES";
@@ -126,9 +128,18 @@ public class GameActivity extends AppCompatActivity {
                 return gestureDetector.onTouchEvent(motionEvent);
             }
         });
+        newGameBtn = findViewById(R.id.newGameBtn);
+        newGameBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                initGame();
+            }
+        });
+
         pointsTv = findViewById(R.id.pointsTextView);
         movesTv = findViewById(R.id.movesTextView);
         timeTv = findViewById(R.id.timeTextView);
+
         rand = new Random();
         initGame();
     }
@@ -143,11 +154,23 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onStop(){
         super.onStop();
         safeGame();
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        safeGame();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        loadGame();
+        updateBoard(board);
     }
 
     /**
@@ -604,7 +627,6 @@ public class GameActivity extends AppCompatActivity {
                 editor.putInt(GAME_BOARD_KEY + i + j, getPieceAt(i,j));
             }
         }
-
         editor.putInt(GAME_MOVES_KEY, numberMoves);
         editor.putInt(GAME_POINTS_KEY, points);
         editor.putString(GAME_TIME_KEY, time.toString());
