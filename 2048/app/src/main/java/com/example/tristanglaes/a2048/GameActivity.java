@@ -1,10 +1,15 @@
 package com.example.tristanglaes.a2048;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.graphics.Interpolator;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.service.media.MediaBrowserService;
+import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,10 +19,11 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import javax.xml.transform.Result;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -37,8 +43,10 @@ public class GameActivity extends AppCompatActivity {
     private static String GAME_MOVES_KEY = "com.example.tristanglaes.a2048.MOVES";
     private static String GAME_POINTS_KEY = "com.example.tristanglaes.a2048.POINTS";
     private static String GAME_STORED_KEY = "com.example.tristanglaes.a2048.STORED";
-    Random rand;
+    private Random rand;
+    private GameTimer gt;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +56,11 @@ public class GameActivity extends AppCompatActivity {
         width = 4;
         height = 4;
         time = "0:00";
+        gt = new GameTimer();
+        pointsTv = findViewById(R.id.pointsTextView);
+        movesTv = findViewById(R.id.movesTextView);
+        timeTv = findViewById(R.id.timeTextView);
+        rand = new Random();
         gv = findViewById(R.id.gameBoard);
         gv.setOnTouchListener(new View.OnTouchListener() {
 
@@ -132,16 +145,10 @@ public class GameActivity extends AppCompatActivity {
         newGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                initGame();
+                startNewGame();
             }
         });
-
-        pointsTv = findViewById(R.id.pointsTextView);
-        movesTv = findViewById(R.id.movesTextView);
-        timeTv = findViewById(R.id.timeTextView);
-
-        rand = new Random();
-        initGame();
+        loadGame();
     }
 
     public void checkGame(){
@@ -157,12 +164,14 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onStop(){
         super.onStop();
+        gt.cancel(true);
         safeGame();
     }
 
     @Override
     protected void onPause(){
         super.onPause();
+        gt.cancel(true);
         safeGame();
     }
 
@@ -190,23 +199,6 @@ public class GameActivity extends AppCompatActivity {
         gv.setAdapter(adapter);
         pointsTv.setText(String.valueOf(points));
         movesTv.setText(String.valueOf(numberMoves));
-        timeTv.setText(time);
-    }
-
-    /**
-     * Lädt oder erstellt ein neues Spiel
-     */
-    private void initGame(){
-
-        //if(PreferenceManager.getDefaultSharedPreferences(GameActivity.this).getBoolean(GAME_STORED_KEY, false)){
-            //loadGame();
-        //} else {
-            numberMoves = 0;
-            points = 0;
-            time = "0:00";
-            initBoardPieces();
-            updateBoard(board);
-        //}
     }
 
     /**
@@ -634,6 +626,26 @@ public class GameActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    private void startNewGame() {
+
+        gt.cancel(true);
+        time = "0:00";
+        timeTv.setText(time);
+        gt = new GameTimer();
+        gt.execute();
+        points = 0;
+        numberMoves = 0;
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                board[i][j] = 0;
+            }
+        }
+        initBoardPieces();
+        updateBoard(board);
+        //timeTv.setText(time);
+    }
+
     private void loadGame() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
         for (int i = 0; i < height; i++){
@@ -644,5 +656,59 @@ public class GameActivity extends AppCompatActivity {
         numberMoves = preferences.getInt(GAME_MOVES_KEY,0);
         points = preferences.getInt(GAME_POINTS_KEY,0);
         time = preferences.getString(GAME_TIME_KEY,"0");
+        timeTv.setText(time);
+        gt = new GameTimer();
+        gt.execute();
+
+    }
+
+    protected void setGameTime(String time){
+        timeTv.setText(time);
+    }
+
+    private class GameTimer extends AsyncTask<Void, Long, Void> {
+
+        long minutes;
+        long seconds;
+        long startTime ;
+        long estimatedTime;
+        long lastTime;
+        boolean run = true;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            startTime = System.currentTimeMillis();
+            lastTime = 0;
+
+            while(run) {
+
+                estimatedTime = System.currentTimeMillis() - startTime;
+                if (estimatedTime - lastTime > 1000) {
+                    lastTime = estimatedTime;
+
+                    seconds = estimatedTime / 1000;
+                    minutes = seconds / 60;
+                    seconds = seconds % 60;
+
+                    publishProgress(minutes, seconds);
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onCancelled() {
+            run = false;
+        }
+
+        @Override
+        protected void onProgressUpdate(Long ...time) {
+            if(time[1] < 10){
+                setGameTime(time[0] + ":0" + time[1]);
+            } else {
+                setGameTime(time[0] + ":" + time[1]);
+            }
+        }
     }
 }
