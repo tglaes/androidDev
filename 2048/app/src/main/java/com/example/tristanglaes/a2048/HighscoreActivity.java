@@ -42,7 +42,12 @@ public class HighscoreActivity extends AppCompatActivity {
                 highscores.add( i + ". " + score);
             }
         }
-        adapter.addAll(highscores);
-        highscoreListView.setAdapter(adapter);
+        if(highscores.isEmpty()){
+            Toast toast = Toast.makeText(getApplicationContext(), "No highscores yet!", Toast.LENGTH_LONG);
+            toast.show();
+        } else {
+            adapter.addAll(highscores);
+            highscoreListView.setAdapter(adapter);
+        }
     }
 }

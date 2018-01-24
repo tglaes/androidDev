@@ -1,15 +1,9 @@
 package com.example.tristanglaes.a2048;
 
-import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
-import android.graphics.Interpolator;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.service.media.MediaBrowserService;
-import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,50 +16,61 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import javax.xml.transform.Result;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GameActivity extends AppCompatActivity {
 
-    private GridView gv;
-    private ArrayAdapter<String> adapter;
-    private int board[][];
-    private int numberMoves;
-    private int width;
-    private int height;
-    private int points;
-    private String time;
-    private MoveDirection move;
-    private TextView pointsTv, movesTv,timeTv;
-    private Button newGameBtn;
+    // Keys für die SharedPreferences
     private static String GAME_BOARD_KEY = "com.example.tristanglaes.a2048.GAMEBOARD";
     private static String GAME_TIME_KEY = "com.example.tristanglaes.a2048.TIME";
     private static String GAME_MOVES_KEY = "com.example.tristanglaes.a2048.MOVES";
     private static String GAME_POINTS_KEY = "com.example.tristanglaes.a2048.POINTS";
     private static String GAME_STORED_KEY = "com.example.tristanglaes.a2048.STORED";
-    private Random rand;
-    private GameTimer gt;
 
-    @SuppressLint("ClickableViewAccessibility")
+    // GridView welches die GUI für das Spielfeld ist.
+    private GridView gv;
+    // Der Adapter versorgt das GridView mit Elementen.
+    private ArrayAdapter<String> adapter;
+    // TextViews welche die GUI für Punkte, Spielzüge und Spielzeit ist.
+    private static TextView pointsTv, movesTv,timeTv;
+    // Das intere Spielfeld.
+    private int board[][];
+    // Die Breite des Boards.
+    private int width;
+    // Die Höhe des Boards.
+    private int height;
+    // Die Anzahl der Spielzüge.
+    private int numberMoves;
+    // Die Punkte.
+    private int points;
+    // Spielzeit in Sekunden.
+    private int time;
+    // Der neues Spiel Button.
+    private Button newGameBtn;
+    // Randomklasse zum berechnen der neuen Spielsteine und deren Position.
+    private Random rand;
+    // Timerklasse für die Spielzeit.
+    private Timer timer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-
-        board = new int[4][4];
         width = 4;
         height = 4;
-        time = "0:00";
-        gt = new GameTimer();
+        board = new int[width][height];
+        time = 0;
+        timer = new Timer();
+        rand = new Random();
         pointsTv = findViewById(R.id.pointsTextView);
         movesTv = findViewById(R.id.movesTextView);
         timeTv = findViewById(R.id.timeTextView);
-        rand = new Random();
+        newGameBtn = findViewById(R.id.newGameBtn);
         gv = findViewById(R.id.gameBoard);
         gv.setOnTouchListener(new View.OnTouchListener() {
 
             private final GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
-
 
             final class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
@@ -141,49 +146,41 @@ public class GameActivity extends AppCompatActivity {
                 return gestureDetector.onTouchEvent(motionEvent);
             }
         });
-        newGameBtn = findViewById(R.id.newGameBtn);
+
         newGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startNewGame();
+                return;
             }
         });
+
+        // Laden des letzten Spiels
         loadGame();
+        // Starten des Timers
+        timer.schedule(new GameTimer(),0,1000);
     }
 
+    /**
+     * Überprüft, ob der Spieler verloren (kein Zug mehr möglich) oder gewonnen (2048 Stein) hat.
+     * Fall er gewonnen hat kann er auswählen ob er ein neues Spiel starten oder weiterspielen will.
+     */
     public void checkGame(){
         if(!isMovePossible()){
             Toast toast = Toast.makeText(getApplicationContext(), "YOU LOST!", Toast.LENGTH_LONG);
             toast.show();
+            //TODO: RUFE SPiel verloren auf.
+            //TODO: Eintragen in Highscores.
         } else {
             addPiece();
             updateBoard(board);
+            //TODO: Checke ob der Spieler einen 2048 Stein hat -> Anzeigen des Gewonnenbildschirm und fragen ob er weiterspielen will.
+            //TODO: Wenn er neues Spiel wählt Highscores.
         }
     }
 
-    @Override
-    protected void onStop(){
-        super.onStop();
-        gt.cancel(true);
-        safeGame();
-    }
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-        gt.cancel(true);
-        safeGame();
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        loadGame();
-        updateBoard(board);
-    }
-
     /**
-     *
+     * Updated das Spielfeld, die Punkte und die Spielzüge.
      * @param board
      */
     private void updateBoard(int board[][]){
@@ -201,9 +198,40 @@ public class GameActivity extends AppCompatActivity {
         movesTv.setText(String.valueOf(numberMoves));
     }
 
+
     /**
-     *
-     * @return 2 (with 90% chance) or 4 (with 10% chance)
+     * Speichert das Spiel und bricht den Timer ab.
+     */
+    @Override
+    protected void onStop(){
+        super.onStop();
+        safeGame();
+        timer.cancel();
+    }
+
+    /**
+     * Speichert das Spiel und bricht den Timer ab.
+     */
+    @Override
+    protected void onPause(){
+        super.onPause();
+        safeGame();
+        timer.cancel();
+    }
+
+    /**
+     * Lädt das letzte Spiel.
+     */
+    @Override
+    protected void onResume(){
+        super.onResume();
+        loadGame();
+        updateBoard(board);
+    }
+
+    /**
+     * Generiert einen neuen Stein.
+     * @return 2 (90% Chance) oder 4 (mit 10% Chance)
      */
     private int getNewPiece() {
         if (rand.nextInt(100) <= 89) {
@@ -214,7 +242,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /**
-     * Initialize the 2 pieces at the start
+     * Initializiert das Spielfeld mit 0 und fügt 2 Startsteine hinzu.
      */
     private void initBoardPieces() {
         for (int i = 0; i < width; i++) {
@@ -227,7 +255,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /**
-     * Setzt einen neuen Stein auf das Spielfeld
+     * Setzt einen neuen Stein auf das Spielfeld.
      */
     public void addPiece() {
         int x, y;
@@ -242,6 +270,10 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *
+     * @return Die Anzahl der Steine auf dem Spielfeld.
+     */
     public int getNumPieces() {
         int numPieces = 0;
         for (int i = 0; i < width; i++) {
@@ -254,11 +286,21 @@ public class GameActivity extends AppCompatActivity {
         return numPieces;
     }
 
+    /**
+     *
+     * @param x Breite des Boards
+     * @param y Höhe des Boards
+     * @return Den Stein an dem gewünschten Spielfeld.
+     */
     public int getPieceAt(int x, int y) {
         return board[x][y];
 
     }
 
+    /**
+     *
+     * @return True, wenn noch mindestens ein Zug möglich ist, false sonst.
+     */
     public boolean isMovePossible() {
         if(getNumPieces() != (width * height)){
             return true;
@@ -272,51 +314,61 @@ public class GameActivity extends AppCompatActivity {
         // not full
     }
 
+    /**
+     *
+     * @param direction Die Richtung des Spielzuges.
+     * @return True, wenn ein Zug in die Richtung möglich ist, false sonst.
+     */
     public boolean isMovePossible(MoveDirection direction) {
 
-        if(getNumPieces() == 0){
+        if (getNumPieces() == 0) {
             return false;
         }
-        if(direction == MoveDirection.SOUTH){
-            for(int i = 0; i < width; i++){
-                for(int j = 0; j < (height - 1); j++){
-                    if(getPieceAt(i,j) > 0){
-                        if((getPieceAt(i,j) == getPieceAt(i,j + 1)) || (getPieceAt(i,j + 1) == 0)){
-                            return true;
+        switch (direction) {
+            case SOUTH:
+                for (int i = 0; i < width; i++) {
+                    for (int j = 0; j < (height - 1); j++) {
+                        if (getPieceAt(i, j) > 0) {
+                            if ((getPieceAt(i, j) == getPieceAt(i, j + 1)) || (getPieceAt(i, j + 1) == 0)) {
+                                return true;
+                            }
                         }
                     }
                 }
-            }
-        }else if(direction == MoveDirection.NORTH){
-            for(int i = 0; i < width; i++){
-                for(int j = (height - 1); j > 0; j--){
-                    if(getPieceAt(i,j) > 0){
-                        if((getPieceAt(i,j) == getPieceAt(i,j - 1)) || (getPieceAt(i,j - 1) == 0)){
-                            return true;
+                break;
+            case EAST:
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < (width - 1); j++) {
+                        if (getPieceAt(j, i) > 0) {
+                            if ((getPieceAt(j, i) == getPieceAt(j + 1, i)) || (getPieceAt(j + 1, i) == 0)) {
+                                return true;
+                            }
                         }
                     }
                 }
-            }
-        } else if(direction == MoveDirection.EAST){
-            for(int i = 0; i < height; i++){
-                for(int j = 0; j < (width -1); j++){
-                    if(getPieceAt(j,i) > 0){
-                        if((getPieceAt(j,i) == getPieceAt(j + 1, i)) || (getPieceAt(j + 1,i) == 0)){
-                            return true;
+                break;
+            case WEST:
+                for (int i = 0; i < height; i++) {
+                    for (int j = (width - 1); j > 0; j--) {
+                        if (getPieceAt(j, i) > 0) {
+                            if ((getPieceAt(j, i) == getPieceAt(j - 1, i)) || (getPieceAt(j - 1, i) == 0)) {
+                                return true;
+                            }
                         }
                     }
                 }
-            }
-        } else {
-            for(int i = 0; i < height; i++){
-                for(int j = (width - 1); j > 0; j--){
-                    if(getPieceAt(j,i) > 0){
-                        if((getPieceAt(j,i) == getPieceAt(j - 1, i)) || (getPieceAt(j - 1,i) == 0)){
-                            return true;
+                break;
+            case NORTH:
+                for (int i = 0; i < width; i++) {
+                    for (int j = (height - 1); j > 0; j--) {
+                        if (getPieceAt(i, j) > 0) {
+                            if ((getPieceAt(i, j) == getPieceAt(i, j - 1)) || (getPieceAt(i, j - 1) == 0)) {
+                                return true;
+                            }
                         }
                     }
                 }
-            }
+                break;
         }
         return false;
     }
@@ -569,6 +621,11 @@ public class GameActivity extends AppCompatActivity {
         return result;
     }
 
+    /**
+     *
+     * @param direction
+     * @return
+     */
     private boolean movePieces(MoveDirection direction) {
         boolean result = false;
         if (direction == MoveDirection.SOUTH
@@ -586,6 +643,11 @@ public class GameActivity extends AppCompatActivity {
         return result;
     }
 
+    /**
+     * Führt einen Zug durch.
+     * @param direction
+     * @return
+     */
     public boolean performMove(MoveDirection direction) {
 
         if (movePieces(direction)) {
@@ -604,12 +666,18 @@ public class GameActivity extends AppCompatActivity {
         return false;
     }
 
+    /**
+     * Setzt eine Stein mit einem Wert an die gewünschte Position.
+     * @param x
+     * @param y
+     * @param piece
+     */
     public void setPieceAt(int x, int y, int piece) {
         board[x][y] = piece;
     }
 
     /**
-     * Speichert den Spielstand in den SharedPreferences
+     * Speichert den Spielstand(Anzahl der Spielzüge, Punkte, Spielzeit, Board) in den SharedPreferences.
      */
     private void safeGame(){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
@@ -621,18 +689,55 @@ public class GameActivity extends AppCompatActivity {
         }
         editor.putInt(GAME_MOVES_KEY, numberMoves);
         editor.putInt(GAME_POINTS_KEY, points);
-        editor.putString(GAME_TIME_KEY, time.toString());
+        editor.putInt(GAME_TIME_KEY, time);
         editor.putBoolean(GAME_STORED_KEY, true);
         editor.apply();
     }
 
+    /**
+     * Lädt ein Spiel aus den SharedPreferences.
+     */
+    private void loadGame() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
+        for (int i = 0; i < height; i++){
+            for (int j=0; j<width; j++){
+                board[i][j] = preferences.getInt(GAME_BOARD_KEY + i + j,0);
+            }
+        }
+        numberMoves = preferences.getInt(GAME_MOVES_KEY,0);
+        points = preferences.getInt(GAME_POINTS_KEY,0);
+        time = preferences.getInt(GAME_TIME_KEY,0);
+    }
+
+
+
+    /**
+     *
+     * @param seconds
+     * @return Die Zeit im Format m:ss
+     */
+    private String convertTime(int seconds){
+
+        String time;
+
+        int minutes = seconds / 60;
+        int newSeconds = seconds % 60;
+
+        if(newSeconds < 10){
+            time = minutes + ":0" + newSeconds;
+        } else{
+            time = minutes + ":" + newSeconds;
+        }
+            return  time;
+    }
+
+    /**
+     * Startet ein neues Spiel, indem alle Variabeln zurückgesetzt werden.
+     */
     private void startNewGame() {
 
-        gt.cancel(true);
-        time = "0:00";
-        timeTv.setText(time);
-        gt = new GameTimer();
-        gt.execute();
+        time = 0;
+        timeTv.setText("0:00");
         points = 0;
         numberMoves = 0;
 
@@ -643,72 +748,20 @@ public class GameActivity extends AppCompatActivity {
         }
         initBoardPieces();
         updateBoard(board);
-        //timeTv.setText(time);
     }
 
-    private void loadGame() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
-        for (int i = 0; i < height; i++){
-            for (int j=0; j<width; j++){
-                board[i][j] = preferences.getInt(GAME_BOARD_KEY + i + j,0);
-            }
-        }
-        numberMoves = preferences.getInt(GAME_MOVES_KEY,0);
-        points = preferences.getInt(GAME_POINTS_KEY,0);
-        time = preferences.getString(GAME_TIME_KEY,"0");
-        timeTv.setText(time);
-        gt = new GameTimer();
-        gt.execute();
-
-    }
-
-    protected void setGameTime(String time){
-        timeTv.setText(time);
-    }
-
-    private class GameTimer extends AsyncTask<Void, Long, Void> {
-
-        long minutes;
-        long seconds;
-        long startTime ;
-        long estimatedTime;
-        long lastTime;
-        boolean run = true;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            startTime = System.currentTimeMillis();
-            lastTime = 0;
-
-            while(run) {
-
-                estimatedTime = System.currentTimeMillis() - startTime;
-                if (estimatedTime - lastTime > 1000) {
-                    lastTime = estimatedTime;
-
-                    seconds = estimatedTime / 1000;
-                    minutes = seconds / 60;
-                    seconds = seconds % 60;
-
-                    publishProgress(minutes, seconds);
+    /**
+     * Timer Taskklasse die von der Timerklasse jede Sekunde aufgerufen wird. Die run() Methode ruft die
+     * Methode runOnUiThread auf und aktualisiert so die Spielzeit.
+     */
+    class GameTimer extends TimerTask {
+        @Override public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    timeTv.setText(convertTime(time++));
                 }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onCancelled() {
-            run = false;
-        }
-
-        @Override
-        protected void onProgressUpdate(Long ...time) {
-            if(time[1] < 10){
-                setGameTime(time[0] + ":0" + time[1]);
-            } else {
-                setGameTime(time[0] + ":" + time[1]);
-            }
+            });
         }
     }
 }
