@@ -4,12 +4,14 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,10 +30,11 @@ public class GameActivity extends AppCompatActivity {
     private static String GAME_POINTS_KEY = "com.example.tristanglaes.a2048.POINTS";
     private static String GAME_STORED_KEY = "com.example.tristanglaes.a2048.STORED";
 
-    // GridView welches die GUI für das Spielfeld ist.
-    private GridView gv;
-    // Der Adapter versorgt das GridView mit Elementen.
-    private ArrayAdapter<String> adapter;
+
+    // TableLayout welches das Raster für das Spielfeld bilded.
+
+    private TableLayout tl;
+
     // TextViews welche die GUI für Punkte, Spielzüge und Spielzeit ist.
     private static TextView pointsTv, movesTv,timeTv;
     // Das intere Spielfeld.
@@ -67,8 +70,8 @@ public class GameActivity extends AppCompatActivity {
         movesTv = findViewById(R.id.movesTextView);
         timeTv = findViewById(R.id.timeTextView);
         newGameBtn = findViewById(R.id.newGameBtn);
-        gv = findViewById(R.id.gameBoard);
-        gv.setOnTouchListener(new View.OnTouchListener() {
+        tl = findViewById(R.id.gameBoard);
+        tl.setOnTouchListener(new View.OnTouchListener() {
 
             private final GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
 
@@ -184,16 +187,35 @@ public class GameActivity extends AppCompatActivity {
      * @param board
      */
     private void updateBoard(int board[][]){
-        adapter = new ArrayAdapter<>(GameActivity.this, R.layout.support_simple_spinner_dropdown_item);
-        List<String> boardList = new ArrayList<>();
+
+
+        TextView texts[] = new TextView[16];
+        texts[0]= findViewById(R.id.text0);
+        texts[1]= findViewById(R.id.text1);
+        texts[2]= findViewById(R.id.text2);
+        texts[3]= findViewById(R.id.text3);
+        texts[4]= findViewById(R.id.text4);
+        texts[5]= findViewById(R.id.text5);
+        texts[6]= findViewById(R.id.text6);
+        texts[7]= findViewById(R.id.text7);
+        texts[8]= findViewById(R.id.text8);
+        texts[9]= findViewById(R.id.text9);
+        texts[10]= findViewById(R.id.text10);
+        texts[11]= findViewById(R.id.text11);
+        texts[12]= findViewById(R.id.text12);
+        texts[13]= findViewById(R.id.text13);
+        texts[14]= findViewById(R.id.text14);
+        texts[15]= findViewById(R.id.text15);
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                boardList.add(String.valueOf(board[j][i]));
+
+                int index = (j*4)+i;
+                texts[index].setText(String.valueOf(board[i][j]));
+                //texts[index].setBackgroundColor();
             }
         }
-        adapter.addAll(boardList);
-        gv.setAdapter(adapter);
+
         pointsTv.setText(String.valueOf(points));
         movesTv.setText(String.valueOf(numberMoves));
     }
