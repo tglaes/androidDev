@@ -4,19 +4,15 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Layout;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -169,14 +165,14 @@ public class GameActivity extends AppCompatActivity {
      * Fall er gewonnen hat kann er auswählen ob er ein neues Spiel starten oder weiterspielen will.
      */
     public void checkGame(){
+        addPiece();
+        updateBoard(board);
         if(!isMovePossible()){
             Toast toast = Toast.makeText(getApplicationContext(), "YOU LOST!", Toast.LENGTH_LONG);
             toast.show();
             //TODO: RUFE SPiel verloren auf.
             //TODO: Eintragen in Highscores.
         } else {
-            addPiece();
-            updateBoard(board);
             //TODO: Checke ob der Spieler einen 2048 Stein hat -> Anzeigen des Gewonnenbildschirm und fragen ob er weiterspielen will.
             //TODO: Wenn er neues Spiel wählt Highscores.
         }
@@ -187,8 +183,7 @@ public class GameActivity extends AppCompatActivity {
      * @param board
      */
     private void updateBoard(int board[][]){
-
-
+        
         TextView texts[] = new TextView[16];
         texts[0]= findViewById(R.id.text0);
         texts[1]= findViewById(R.id.text1);
@@ -211,13 +206,46 @@ public class GameActivity extends AppCompatActivity {
             for (int j = 0; j < height; j++) {
 
                 int index = (j*4)+i;
-                texts[index].setText(String.valueOf(board[i][j]));
-                //texts[index].setBackgroundColor();
+                String fieldValue = String.valueOf(board[i][j]).equals("0") ? "" : String.valueOf(board[i][j]) ;
+                texts[index].setText(fieldValue);
+
+                int color = 0;
+                switch (fieldValue){
+                    case "": color = getResources().getColor(R.color.white);
+                        break;
+                    case "2": color = getResources().getColor(R.color.b2);
+                        break;
+                    case "4":color = getResources().getColor(R.color.b4);
+                        break;
+                    case "8":color = getResources().getColor(R.color.b8);
+                        break;
+                    case "16":color = getResources().getColor(R.color.b16);
+                        break;
+                    case "32":color = getResources().getColor(R.color.b32);
+                        break;
+                    case "64":color = getResources().getColor(R.color.b64);
+                        break;
+                    case "128":color = getResources().getColor(R.color.b128);
+                        break;
+                    case "256":color = getResources().getColor(R.color.b256);
+                        break;
+                    case "512":color = getResources().getColor(R.color.b512);
+                        break;
+                    case "1024":color = getResources().getColor(R.color.b1024);
+                        break;
+                    case "2048":color = getResources().getColor(R.color.b2048);
+                        break;
+                    case "4096":color = getResources().getColor(R.color.b4096);
+                        break;
+
+                }
+                // Setzte die Farbe
+                texts[index].setBackgroundColor(color);
             }
         }
 
-        pointsTv.setText(String.valueOf(points));
-        movesTv.setText(String.valueOf(numberMoves));
+        pointsTv.setText("SCORE: " + String.valueOf(points));
+        movesTv.setText("MOVES: " + String.valueOf(numberMoves));
     }
 
 
@@ -305,6 +333,7 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
         }
+        Log.e(String.valueOf(numPieces),"Pieces:");
         return numPieces;
     }
 
@@ -754,12 +783,19 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /**
+     *
+     */
+    private void highscore(){
+
+    }
+
+    /**
      * Startet ein neues Spiel, indem alle Variabeln zurückgesetzt werden.
      */
     private void startNewGame() {
 
         time = 0;
-        timeTv.setText("0:00");
+        timeTv.setText("TIME: 0:00");
         points = 0;
         numberMoves = 0;
 
@@ -781,7 +817,7 @@ public class GameActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    timeTv.setText(convertTime(time++));
+                    timeTv.setText("TIME: " + convertTime(time++));
                 }
             });
         }

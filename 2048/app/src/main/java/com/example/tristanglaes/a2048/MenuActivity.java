@@ -8,17 +8,16 @@ import android.widget.Button;
 
 public class MenuActivity extends AppCompatActivity {
 
-    private Button playBtn, highscoresBtn, exitBtn;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
         // Initializiere Buttons und füge ihnen OnClickListeners hinzu.
-        playBtn = findViewById(R.id.playBtn);
-        highscoresBtn = findViewById(R.id.highScoreBtn);
-        exitBtn = findViewById(R.id.exitBtn);
+        Button playBtn = findViewById(R.id.playBtn);
+        Button highscoresBtn = findViewById(R.id.highScoreBtn);
+        Button themeBtn = findViewById(R.id.themeBtn);
+        Button exitBtn = findViewById(R.id.exitBtn);
 
         playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,6 +31,14 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(MenuActivity.this, HighscoreActivity.class);
+                startActivity(i);
+            }
+        });
+
+        themeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MenuActivity.this, ThemeActivity.class);
                 startActivity(i);
             }
         });

@@ -16,19 +16,25 @@
             android:id="@+id/pointsTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/background_dark" />
 
         <TextView
             android:id="@+id/movesTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/background_dark" />
 
         <TextView
             android:id="@+id/timeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/background_dark" />
 
     </LinearLayout>
 
@@ -299,17 +305,19 @@
         </TableRow>
     </TableLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/buttonsBar"
         android:layout_width="match_parent"
-        android:layout_height="84dp"
-        android:orientation="horizontal">
+        android:layout_height="84dp">
 
         <Button
             android:id="@+id/newGameBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/new_game" />
-    </LinearLayout>
+            android:layout_centerInParent="true"
+            android:background="@color/newGameBtnColor"
+            android:text="@string/new_game"
+            android:textSize="16sp" />
+    </RelativeLayout>
 
 </LinearLayout>

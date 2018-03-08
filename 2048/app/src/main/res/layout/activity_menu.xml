@@ -19,6 +19,12 @@
         android:text="@string/highscores" />
 
     <Button
+        android:id="@+id/themeBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Theme" />
+
+    <Button
         android:id="@+id/exitBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
