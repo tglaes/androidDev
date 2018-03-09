@@ -4,4 +4,8 @@
     <string name="highscores">Highscores</string>
     <string name="exit">Exit</string>
     <string name="new_game">New Game</string>
+    <string name="blue_theme">Blue</string>
+    <string name="violet_theme">Black</string>
+    <string name="green_theme">Green</string>
+    <string name="red_theme">Red</string>
 </resources>

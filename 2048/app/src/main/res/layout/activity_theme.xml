@@ -1,9 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.example.tristanglaes.a2048.ThemeActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <RadioGroup
+        android:id="@+id/radioGroupTheme"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_weight="1"
+        android:background="#37474F"
+        android:checkedButton="@+id/blue_theme">
+
+        <RadioButton
+            android:id="@+id/blue_theme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/blue_theme"
+            android:textAlignment="center"
+            android:textColor="@color/b2048"/>
+
+        <RadioButton
+
+            android:id="@+id/black_theme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/violet_theme"
+            android:textAlignment="center"
+            android:textColor="@color/v2048"/>
+
+        <RadioButton
+
+            android:id="@+id/green_theme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/green_theme"
+            android:textAlignment="center"
+            android:textColor="@color/g2048"/>
+
+        <RadioButton
+
+            android:id="@+id/red_theme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/red_theme"
+            android:textAlignment="center"
+            android:textColor="@color/r2048" />
+
+    </RadioGroup>
+
+
+</RelativeLayout>

@@ -35,7 +35,7 @@ public class HighscoreActivity extends AppCompatActivity {
 
         for(int i = 1; i<=10;i++){
 
-            String score = sp.getString("com.example.tristanglaes.a2048.HIGHSCORE" + i, "");
+            String score = sp.getString(HIGH_SCORE_KEY + i, "");
             if(score.equals("")){
                 break;
             } else {

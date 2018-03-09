@@ -1,6 +1,7 @@
 package com.example.tristanglaes.a2048;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,14 +26,14 @@ public class GameActivity extends AppCompatActivity {
     private static String GAME_MOVES_KEY = "com.example.tristanglaes.a2048.MOVES";
     private static String GAME_POINTS_KEY = "com.example.tristanglaes.a2048.POINTS";
     private static String GAME_STORED_KEY = "com.example.tristanglaes.a2048.STORED";
-
+    public static String THEME_KEY = "com.example.tristanglaes.a2048.THEME";
 
     // TableLayout welches das Raster für das Spielfeld bilded.
 
     private TableLayout tl;
 
     // TextViews welche die GUI für Punkte, Spielzüge und Spielzeit ist.
-    private static TextView pointsTv, movesTv,timeTv;
+    private static TextView pointsTv, movesTv, timeTv;
     // Das intere Spielfeld.
     private int board[][];
     // Die Breite des Boards.
@@ -51,6 +52,7 @@ public class GameActivity extends AppCompatActivity {
     private Random rand;
     // Timerklasse für die Spielzeit.
     private Timer timer;
+    private String theme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,11 @@ public class GameActivity extends AppCompatActivity {
         timeTv = findViewById(R.id.timeTextView);
         newGameBtn = findViewById(R.id.newGameBtn);
         tl = findViewById(R.id.gameBoard);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
+        theme = preferences.getString(THEME_KEY,"Blue");
+
+
         tl.setOnTouchListener(new View.OnTouchListener() {
 
             private final GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
@@ -112,28 +119,28 @@ public class GameActivity extends AppCompatActivity {
             }
 
             public void onSwipeRight() {
-                if(isMovePossible(MoveDirection.EAST)){
+                if (isMovePossible(MoveDirection.EAST)) {
                     performMove(MoveDirection.EAST);
                     checkGame();
                 }
             }
 
             public void onSwipeLeft() {
-                if(isMovePossible(MoveDirection.WEST)){
+                if (isMovePossible(MoveDirection.WEST)) {
                     performMove(MoveDirection.WEST);
                     checkGame();
                 }
             }
 
             public void onSwipeTop() {
-                if(isMovePossible(MoveDirection.NORTH)){
+                if (isMovePossible(MoveDirection.NORTH)) {
                     performMove(MoveDirection.NORTH);
                     checkGame();
                 }
             }
 
             public void onSwipeBottom() {
-                if(isMovePossible(MoveDirection.SOUTH)){
+                if (isMovePossible(MoveDirection.SOUTH)) {
                     performMove(MoveDirection.SOUTH);
                     checkGame();
                 }
@@ -157,21 +164,26 @@ public class GameActivity extends AppCompatActivity {
         // Laden des letzten Spiels
         loadGame();
         // Starten des Timers
-        timer.schedule(new GameTimer(),0,1000);
+        timer.schedule(new GameTimer(), 0, 1000);
     }
 
     /**
      * Überprüft, ob der Spieler verloren (kein Zug mehr möglich) oder gewonnen (2048 Stein) hat.
      * Fall er gewonnen hat kann er auswählen ob er ein neues Spiel starten oder weiterspielen will.
      */
-    public void checkGame(){
+    public void checkGame() {
         addPiece();
         updateBoard(board);
-        if(!isMovePossible()){
+        if (!isMovePossible()) {
             Toast toast = Toast.makeText(getApplicationContext(), "YOU LOST!", Toast.LENGTH_LONG);
             toast.show();
             //TODO: RUFE SPiel verloren auf.
             //TODO: Eintragen in Highscores.
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(HighscoreActivity.HIGH_SCORE_KEY, pointsTv.getText().toString());
+            editor.apply();
+
         } else {
             //TODO: Checke ob der Spieler einen 2048 Stein hat -> Anzeigen des Gewonnenbildschirm und fragen ob er weiterspielen will.
             //TODO: Wenn er neues Spiel wählt Highscores.
@@ -180,67 +192,37 @@ public class GameActivity extends AppCompatActivity {
 
     /**
      * Updated das Spielfeld, die Punkte und die Spielzüge.
+     *
      * @param board
      */
-    private void updateBoard(int board[][]){
-        
+    private void updateBoard(int board[][]) {
+
         TextView texts[] = new TextView[16];
-        texts[0]= findViewById(R.id.text0);
-        texts[1]= findViewById(R.id.text1);
-        texts[2]= findViewById(R.id.text2);
-        texts[3]= findViewById(R.id.text3);
-        texts[4]= findViewById(R.id.text4);
-        texts[5]= findViewById(R.id.text5);
-        texts[6]= findViewById(R.id.text6);
-        texts[7]= findViewById(R.id.text7);
-        texts[8]= findViewById(R.id.text8);
-        texts[9]= findViewById(R.id.text9);
-        texts[10]= findViewById(R.id.text10);
-        texts[11]= findViewById(R.id.text11);
-        texts[12]= findViewById(R.id.text12);
-        texts[13]= findViewById(R.id.text13);
-        texts[14]= findViewById(R.id.text14);
-        texts[15]= findViewById(R.id.text15);
+        texts[0] = findViewById(R.id.text0);
+        texts[1] = findViewById(R.id.text1);
+        texts[2] = findViewById(R.id.text2);
+        texts[3] = findViewById(R.id.text3);
+        texts[4] = findViewById(R.id.text4);
+        texts[5] = findViewById(R.id.text5);
+        texts[6] = findViewById(R.id.text6);
+        texts[7] = findViewById(R.id.text7);
+        texts[8] = findViewById(R.id.text8);
+        texts[9] = findViewById(R.id.text9);
+        texts[10] = findViewById(R.id.text10);
+        texts[11] = findViewById(R.id.text11);
+        texts[12] = findViewById(R.id.text12);
+        texts[13] = findViewById(R.id.text13);
+        texts[14] = findViewById(R.id.text14);
+        texts[15] = findViewById(R.id.text15);
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
 
-                int index = (j*4)+i;
-                String fieldValue = String.valueOf(board[i][j]).equals("0") ? "" : String.valueOf(board[i][j]) ;
+                int index = (j * 4) + i;
+                String fieldValue = String.valueOf(board[i][j]).equals("0") ? "" : String.valueOf(board[i][j]);
                 texts[index].setText(fieldValue);
-
-                int color = 0;
-                switch (fieldValue){
-                    case "": color = getResources().getColor(R.color.white);
-                        break;
-                    case "2": color = getResources().getColor(R.color.b2);
-                        break;
-                    case "4":color = getResources().getColor(R.color.b4);
-                        break;
-                    case "8":color = getResources().getColor(R.color.b8);
-                        break;
-                    case "16":color = getResources().getColor(R.color.b16);
-                        break;
-                    case "32":color = getResources().getColor(R.color.b32);
-                        break;
-                    case "64":color = getResources().getColor(R.color.b64);
-                        break;
-                    case "128":color = getResources().getColor(R.color.b128);
-                        break;
-                    case "256":color = getResources().getColor(R.color.b256);
-                        break;
-                    case "512":color = getResources().getColor(R.color.b512);
-                        break;
-                    case "1024":color = getResources().getColor(R.color.b1024);
-                        break;
-                    case "2048":color = getResources().getColor(R.color.b2048);
-                        break;
-                    case "4096":color = getResources().getColor(R.color.b4096);
-                        break;
-
-                }
                 // Setzte die Farbe
-                texts[index].setBackgroundColor(color);
+                texts[index].setBackgroundColor(getColor(fieldValue));
             }
         }
 
@@ -253,7 +235,7 @@ public class GameActivity extends AppCompatActivity {
      * Speichert das Spiel und bricht den Timer ab.
      */
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
         safeGame();
         timer.cancel();
@@ -263,7 +245,7 @@ public class GameActivity extends AppCompatActivity {
      * Speichert das Spiel und bricht den Timer ab.
      */
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         safeGame();
         timer.cancel();
@@ -273,7 +255,7 @@ public class GameActivity extends AppCompatActivity {
      * Lädt das letzte Spiel.
      */
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         loadGame();
         updateBoard(board);
@@ -281,6 +263,7 @@ public class GameActivity extends AppCompatActivity {
 
     /**
      * Generiert einen neuen Stein.
+     *
      * @return 2 (90% Chance) oder 4 (mit 10% Chance)
      */
     private int getNewPiece() {
@@ -321,7 +304,6 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /**
-     *
      * @return Die Anzahl der Steine auf dem Spielfeld.
      */
     public int getNumPieces() {
@@ -333,12 +315,11 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
         }
-        Log.e(String.valueOf(numPieces),"Pieces:");
+        Log.e(String.valueOf(numPieces), "Pieces:");
         return numPieces;
     }
 
     /**
-     *
      * @param x Breite des Boards
      * @param y Höhe des Boards
      * @return Den Stein an dem gewünschten Spielfeld.
@@ -349,11 +330,10 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /**
-     *
      * @return True, wenn noch mindestens ein Zug möglich ist, false sonst.
      */
     public boolean isMovePossible() {
-        if(getNumPieces() != (width * height)){
+        if (getNumPieces() != (width * height)) {
             return true;
         }
 
@@ -366,7 +346,6 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /**
-     *
      * @param direction Die Richtung des Spielzuges.
      * @return True, wenn ein Zug in die Richtung möglich ist, false sonst.
      */
@@ -584,22 +563,22 @@ public class GameActivity extends AppCompatActivity {
         if (direction == MoveDirection.WEST) {
 
             for (int x = 0; x < (width - 1); x++) {
-                if(getPieceAt(x,y) > 0)
+                if (getPieceAt(x, y) > 0)
                     if (getPieceAt(x, y) == getPieceAt(x + 1, y)) {
                         setPieceAt(x + 1, y, 0);
                         setPieceAt(x, y, (getPieceAt(x, y) * 2));
-                        points = points + (getPieceAt(x,y));
+                        points = points + (getPieceAt(x, y));
                         result = true;
                     }
             }
 
         } else if (direction == MoveDirection.EAST) {
             for (int x = (width - 1); x > 0; x--) {
-                if(getPieceAt(x,y) > 0)
+                if (getPieceAt(x, y) > 0)
                     if (getPieceAt(x, y) == getPieceAt(x - 1, y)) {
                         setPieceAt(x - 1, y, 0);
                         setPieceAt(x, y, (getPieceAt(x, y) * 2));
-                        points = points + (getPieceAt(x,y));
+                        points = points + (getPieceAt(x, y));
                         result = true;
                     }
             }
@@ -620,22 +599,22 @@ public class GameActivity extends AppCompatActivity {
         if (direction == MoveDirection.SOUTH) {
 
             for (int y = (height - 1); y > 0; y--) {
-                if(getPieceAt(x,y) > 0)
+                if (getPieceAt(x, y) > 0)
                     if (getPieceAt(x, y) == getPieceAt(x, (y - 1))) {
                         setPieceAt(x, y - 1, 0);
                         setPieceAt(x, y, (getPieceAt(x, y) * 2));
-                        points = points + (getPieceAt(x,y));
+                        points = points + (getPieceAt(x, y));
                         result = true;
                     }
             }
 
         } else if (direction == MoveDirection.NORTH) {
             for (int y = 0; y < (height - 1); y++) {
-                if(getPieceAt(x,y) > 0)
+                if (getPieceAt(x, y) > 0)
                     if (getPieceAt(x, y) == getPieceAt(x, (y + 1))) {
                         setPieceAt(x, y + 1, 0);
                         setPieceAt(x, y, (getPieceAt(x, y) * 2));
-                        points = points + (getPieceAt(x,y));
+                        points = points + (getPieceAt(x, y));
                         result = true;
                     }
             }
@@ -644,7 +623,6 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /**
-     *
      * Moves the whole column either to SOUTH or WEST !NO MERGE YET!
      *
      * @param x
@@ -673,7 +651,6 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /**
-     *
      * @param direction
      * @return
      */
@@ -696,6 +673,7 @@ public class GameActivity extends AppCompatActivity {
 
     /**
      * Führt einen Zug durch.
+     *
      * @param direction
      * @return
      */
@@ -708,7 +686,7 @@ public class GameActivity extends AppCompatActivity {
             }
             return true;
         } else {
-            if(mergeAll(direction)){
+            if (mergeAll(direction)) {
                 numberMoves++;
                 movePieces(direction);
                 return true;
@@ -719,6 +697,7 @@ public class GameActivity extends AppCompatActivity {
 
     /**
      * Setzt eine Stein mit einem Wert an die gewünschte Position.
+     *
      * @param x
      * @param y
      * @param piece
@@ -730,12 +709,12 @@ public class GameActivity extends AppCompatActivity {
     /**
      * Speichert den Spielstand(Anzahl der Spielzüge, Punkte, Spielzeit, Board) in den SharedPreferences.
      */
-    private void safeGame(){
+    private void safeGame() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
         SharedPreferences.Editor editor = preferences.edit();
-        for (int i = 0; i < height; i++){
-            for (int j=0; j<width; j++){
-                editor.putInt(GAME_BOARD_KEY + i + j, getPieceAt(i,j));
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                editor.putInt(GAME_BOARD_KEY + i + j, getPieceAt(i, j));
             }
         }
         editor.putInt(GAME_MOVES_KEY, numberMoves);
@@ -750,43 +729,34 @@ public class GameActivity extends AppCompatActivity {
      */
     private void loadGame() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
-        for (int i = 0; i < height; i++){
-            for (int j=0; j<width; j++){
-                board[i][j] = preferences.getInt(GAME_BOARD_KEY + i + j,0);
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                board[i][j] = preferences.getInt(GAME_BOARD_KEY + i + j, 0);
             }
         }
-        numberMoves = preferences.getInt(GAME_MOVES_KEY,0);
-        points = preferences.getInt(GAME_POINTS_KEY,0);
-        time = preferences.getInt(GAME_TIME_KEY,0);
+        numberMoves = preferences.getInt(GAME_MOVES_KEY, 0);
+        points = preferences.getInt(GAME_POINTS_KEY, 0);
+        time = preferences.getInt(GAME_TIME_KEY, 0);
     }
 
 
-
     /**
-     *
      * @param seconds
      * @return Die Zeit im Format m:ss
      */
-    private String convertTime(int seconds){
+    private String convertTime(int seconds) {
 
         String time;
 
         int minutes = seconds / 60;
         int newSeconds = seconds % 60;
 
-        if(newSeconds < 10){
+        if (newSeconds < 10) {
             time = minutes + ":0" + newSeconds;
-        } else{
+        } else {
             time = minutes + ":" + newSeconds;
         }
-            return  time;
-    }
-
-    /**
-     *
-     */
-    private void highscore(){
-
+        return time;
     }
 
     /**
@@ -813,7 +783,8 @@ public class GameActivity extends AppCompatActivity {
      * Methode runOnUiThread auf und aktualisiert so die Spielzeit.
      */
     class GameTimer extends TimerTask {
-        @Override public void run() {
+        @Override
+        public void run() {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -821,5 +792,181 @@ public class GameActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private int getColor(String fieldValue) {
+        int color = 0;
+
+        if (theme.equals("Blue")) {
+            switch (fieldValue) {
+                case "":
+                    color = getResources().getColor(R.color.white);
+                    break;
+                case "2":
+                    color = getResources().getColor(R.color.b2);
+                    break;
+                case "4":
+                    color = getResources().getColor(R.color.b4);
+                    break;
+                case "8":
+                    color = getResources().getColor(R.color.b8);
+                    break;
+                case "16":
+                    color = getResources().getColor(R.color.b16);
+                    break;
+                case "32":
+                    color = getResources().getColor(R.color.b32);
+                    break;
+                case "64":
+                    color = getResources().getColor(R.color.b64);
+                    break;
+                case "128":
+                    color = getResources().getColor(R.color.b128);
+                    break;
+                case "256":
+                    color = getResources().getColor(R.color.b256);
+                    break;
+                case "512":
+                    color = getResources().getColor(R.color.b512);
+                    break;
+                case "1024":
+                    color = getResources().getColor(R.color.b1024);
+                    break;
+                case "2048":
+                    color = getResources().getColor(R.color.b2048);
+                    break;
+                case "4096":
+                    color = getResources().getColor(R.color.b4096);
+                    break;
+
+            }
+        } else if (theme.equals("Violet")) {
+            switch (fieldValue) {
+                case "":
+                    color = getResources().getColor(R.color.white);
+                    break;
+                case "2":
+                    color = getResources().getColor(R.color.v2);
+                    break;
+                case "4":
+                    color = getResources().getColor(R.color.v4);
+                    break;
+                case "8":
+                    color = getResources().getColor(R.color.v8);
+                    break;
+                case "16":
+                    color = getResources().getColor(R.color.v16);
+                    break;
+                case "32":
+                    color = getResources().getColor(R.color.v32);
+                    break;
+                case "64":
+                    color = getResources().getColor(R.color.v64);
+                    break;
+                case "128":
+                    color = getResources().getColor(R.color.v128);
+                    break;
+                case "256":
+                    color = getResources().getColor(R.color.v256);
+                    break;
+                case "512":
+                    color = getResources().getColor(R.color.v512);
+                    break;
+                case "1024":
+                    color = getResources().getColor(R.color.v1024);
+                    break;
+                case "2048":
+                    color = getResources().getColor(R.color.v2048);
+                    break;
+                case "4096":
+                    color = getResources().getColor(R.color.v4096);
+                    break;
+            }
+        } else if (theme.equals("Green")) {
+            switch (fieldValue) {
+                case "":
+                    color = getResources().getColor(R.color.white);
+                    break;
+                case "2":
+                    color = getResources().getColor(R.color.g2);
+                    break;
+                case "4":
+                    color = getResources().getColor(R.color.g4);
+                    break;
+                case "8":
+                    color = getResources().getColor(R.color.g8);
+                    break;
+                case "16":
+                    color = getResources().getColor(R.color.g16);
+                    break;
+                case "32":
+                    color = getResources().getColor(R.color.g32);
+                    break;
+                case "64":
+                    color = getResources().getColor(R.color.g64);
+                    break;
+                case "128":
+                    color = getResources().getColor(R.color.g128);
+                    break;
+                case "256":
+                    color = getResources().getColor(R.color.g256);
+                    break;
+                case "512":
+                    color = getResources().getColor(R.color.g512);
+                    break;
+                case "1024":
+                    color = getResources().getColor(R.color.g1024);
+                    break;
+                case "2048":
+                    color = getResources().getColor(R.color.g2048);
+                    break;
+                case "4096":
+                    color = getResources().getColor(R.color.g4096);
+                    break;
+            }
+        } else if (theme.equals("Red")) {
+            switch (fieldValue) {
+                case "":
+                    color = getResources().getColor(R.color.white);
+                    break;
+                case "2":
+                    color = getResources().getColor(R.color.r2);
+                    break;
+                case "4":
+                    color = getResources().getColor(R.color.r4);
+                    break;
+                case "8":
+                    color = getResources().getColor(R.color.r8);
+                    break;
+                case "16":
+                    color = getResources().getColor(R.color.r16);
+                    break;
+                case "32":
+                    color = getResources().getColor(R.color.r32);
+                    break;
+                case "64":
+                    color = getResources().getColor(R.color.r64);
+                    break;
+                case "128":
+                    color = getResources().getColor(R.color.r128);
+                    break;
+                case "256":
+                    color = getResources().getColor(R.color.r256);
+                    break;
+                case "512":
+                    color = getResources().getColor(R.color.r512);
+                    break;
+                case "1024":
+                    color = getResources().getColor(R.color.r1024);
+                    break;
+                case "2048":
+                    color = getResources().getColor(R.color.r2048);
+                    break;
+                case "4096":
+                    color = getResources().getColor(R.color.r4096);
+                    break;
+            }
+        }
+        return color;
     }
 }
