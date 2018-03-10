@@ -181,7 +181,7 @@ public class GameActivity extends AppCompatActivity {
             //TODO: Eintragen in Highscores.
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(HighscoreActivity.HIGH_SCORE_KEY, pointsTv.getText().toString());
+            editor.putString(HighscoreActivity.HIGH_SCORE_KEY + "1", pointsTv.getText().toString());
             editor.apply();
 
         } else {
