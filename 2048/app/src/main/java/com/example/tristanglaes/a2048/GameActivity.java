@@ -1,11 +1,9 @@
 package com.example.tristanglaes.a2048;
 
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -50,8 +48,8 @@ public class GameActivity extends AppCompatActivity {
     private Button newGameBtn;
     // Randomklasse zum berechnen der neuen Spielsteine und deren Position.
     private Random rand;
-    // Timerklasse für die Spielzeit.
-    private Timer timer;
+    // Spieltimer
+    private GameTimer gameTimer;
     private String theme;
 
     @Override
@@ -62,14 +60,13 @@ public class GameActivity extends AppCompatActivity {
         height = 4;
         board = new int[width][height];
         time = 0;
-        timer = new Timer();
         rand = new Random();
         pointsTv = findViewById(R.id.pointsTextView);
         movesTv = findViewById(R.id.movesTextView);
         timeTv = findViewById(R.id.timeTextView);
         newGameBtn = findViewById(R.id.newGameBtn);
         tl = findViewById(R.id.gameBoard);
-
+        gameTimer = new GameTimer();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
         theme = preferences.getString(THEME_KEY,"Blue");
 
@@ -156,15 +153,14 @@ public class GameActivity extends AppCompatActivity {
         newGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                gameTimer.restartTimer();
                 startNewGame();
-                return;
             }
         });
 
         // Laden des letzten Spiels
         loadGame();
-        // Starten des Timers
-        timer.schedule(new GameTimer(), 0, 1000);
+        gameTimer.startTimer();
     }
 
     /**
@@ -175,6 +171,7 @@ public class GameActivity extends AppCompatActivity {
         addPiece();
         updateBoard(board);
         if (!isMovePossible()) {
+            gameTimer.stopTimer();
             Toast toast = Toast.makeText(getApplicationContext(), "YOU LOST!", Toast.LENGTH_LONG);
             toast.show();
             //TODO: RUFE SPiel verloren auf.
@@ -238,7 +235,6 @@ public class GameActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         safeGame();
-        timer.cancel();
     }
 
     /**
@@ -248,7 +244,6 @@ public class GameActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         safeGame();
-        timer.cancel();
     }
 
     /**
@@ -315,7 +310,6 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
         }
-        Log.e(String.valueOf(numPieces), "Pieces:");
         return numPieces;
     }
 
@@ -778,20 +772,71 @@ public class GameActivity extends AppCompatActivity {
         updateBoard(board);
     }
 
-    /**
-     * Timer Taskklasse die von der Timerklasse jede Sekunde aufgerufen wird. Die run() Methode ruft die
-     * Methode runOnUiThread auf und aktualisiert so die Spielzeit.
-     */
-    class GameTimer extends TimerTask {
-        @Override
-        public void run() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    timeTv.setText("TIME: " + convertTime(time++));
-                }
-            });
+    private class GameTimer {
+
+        private Timer timer;
+        private GameTimerTask gameTimerTask;
+
+        public GameTimer(){
+            timer = new Timer();
         }
+
+        /**
+         * Startet den Timer
+         */
+        public void startTimer(){
+            gameTimerTask = new GameTimerTask();
+            timer.schedule(gameTimerTask,0,1000);
+        }
+
+        /**
+         * Stoppt den Timer.
+         */
+        public void stopTimer(){
+            gameTimerTask.cancel();
+            timer.purge();
+        }
+
+        /**
+         * Erstellt einen neuen Timer der wieder bei 0 anfängt zu zählen.
+         */
+        public void restartTimer(){
+            time = 0;
+            // Anhalten des alten Tasks.
+            gameTimerTask.cancel();
+            // Entfernen des gestoppten Tasks;
+            timer.purge();
+            // Neuen Task einreihen.
+            gameTimerTask = new GameTimerTask();
+            timer.schedule(gameTimerTask,0,1000);
+        }
+
+        /**
+         * Timer Taskklasse die von der Timerklasse jede Sekunde aufgerufen wird. Die run() Methode ruft die
+         * Methode runOnUiThread auf und aktualisiert so die Spielzeit.
+         */
+        private class GameTimerTask extends TimerTask {
+
+            public boolean isRunning = false;
+
+            @Override
+            public void run() {
+                isRunning = true;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        timeTv.setText("TIME: " + convertTime(time++));
+                    }
+                });
+            }
+
+            @Override
+            public boolean cancel(){
+                isRunning = false;
+                return super.cancel();
+            }
+        }
+
     }
 
     private int getColor(String fieldValue) {
