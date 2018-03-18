@@ -168,19 +168,16 @@ public class GameActivity extends AppCompatActivity {
      * Fall er gewonnen hat kann er auswählen ob er ein neues Spiel starten oder weiterspielen will.
      */
     public void checkGame() {
+        // Neuer Stein wird hinzugefügt.
         addPiece();
         updateBoard(board);
         if (!isMovePossible()) {
+            // Spiel ist zuende.
             gameTimer.stopTimer();
             Toast toast = Toast.makeText(getApplicationContext(), "YOU LOST!", Toast.LENGTH_LONG);
             toast.show();
             //TODO: RUFE SPiel verloren auf.
-            //TODO: Eintragen in Highscores.
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(HighscoreActivity.HIGH_SCORE_KEY + "1", pointsTv.getText().toString());
-            editor.apply();
-
+            checkHighscores();
         } else {
             //TODO: Checke ob der Spieler einen 2048 Stein hat -> Anzeigen des Gewonnenbildschirm und fragen ob er weiterspielen will.
             //TODO: Wenn er neues Spiel wählt Highscores.
@@ -233,6 +230,7 @@ public class GameActivity extends AppCompatActivity {
      */
     @Override
     protected void onStop() {
+        gameTimer.stopTimer();
         super.onStop();
         safeGame();
     }
@@ -242,6 +240,7 @@ public class GameActivity extends AppCompatActivity {
      */
     @Override
     protected void onPause() {
+        gameTimer.stopTimer();
         super.onPause();
         safeGame();
     }
@@ -254,6 +253,15 @@ public class GameActivity extends AppCompatActivity {
         super.onResume();
         loadGame();
         updateBoard(board);
+        gameTimer.startTimer();
+    }
+
+    @Override
+    protected  void onRestart() {
+        super.onRestart();
+        loadGame();
+        updateBoard(board);
+        gameTimer.startTimer();
     }
 
     /**
@@ -772,6 +780,14 @@ public class GameActivity extends AppCompatActivity {
         updateBoard(board);
     }
 
+    private void checkHighscores() {
+        //TODO: Eintragen in Highscores.
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(HighscoreActivity.HIGH_SCORE_KEY + "1", pointsTv.getText().toString());
+        editor.apply();
+    }
+
     private class GameTimer {
 
         private Timer timer;
@@ -785,8 +801,15 @@ public class GameActivity extends AppCompatActivity {
          * Startet den Timer
          */
         public void startTimer(){
-            gameTimerTask = new GameTimerTask();
-            timer.schedule(gameTimerTask,0,1000);
+            if(gameTimerTask == null){
+                gameTimerTask = new GameTimerTask();
+                timer.schedule(gameTimerTask,0,1000);
+            } else {
+                gameTimerTask.cancel();
+                timer.purge();
+                gameTimerTask = new GameTimerTask();
+                timer.schedule(gameTimerTask,0,1000);
+            }
         }
 
         /**

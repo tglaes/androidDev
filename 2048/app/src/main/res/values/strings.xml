@@ -8,4 +8,5 @@
     <string name="violet_theme">Black</string>
     <string name="green_theme">Green</string>
     <string name="red_theme">Red</string>
+    <string name="theme">Theme</string>
 </resources>
