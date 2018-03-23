@@ -1,32 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainMenuLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.tristanglaes.a2048.MenuActivity">
+    tools:context="com.example.tristanglaes.a2048.MenuActivity"
+    android:background="@color/colorPrimary">
+
+    <TextView
+        android:id="@+id/headlineTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:text="@string/_2048"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textColor="@color/b2048"
+        android:textSize="60sp" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/_2048icon"
+        android:src="@mipmap/ic_launcher_foreground"/>
 
     <Button
         android:id="@+id/playBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/play" />
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="15dp"
+        android:background="@color/b8"
+        android:elevation="0dp"
+        android:text="@string/play"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:textSize="18sp"
+        android:textAllCaps="false"/>
 
     <Button
         android:id="@+id/highScoreBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/highscores" />
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="0dp"
+        android:background="@color/b8"
+        android:text="@string/highscores"
+        android:textSize="18sp"
+        android:textAllCaps="false"/>
 
     <Button
         android:id="@+id/themeBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/theme" />
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="0dp"
+        android:background="@color/b8"
+        android:text="@string/theme"
+        android:textSize="18sp"
+        android:textAllCaps="false"/>
 
     <Button
         android:id="@+id/exitBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/exit" />
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="0dp"
+        android:background="@color/b8"
+        android:text="@string/exit"
+        android:textSize="18sp"
+        android:textAllCaps="false"/>
 </LinearLayout>

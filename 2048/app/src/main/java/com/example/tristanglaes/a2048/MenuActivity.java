@@ -1,18 +1,18 @@
 package com.example.tristanglaes.a2048;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-public class MenuActivity extends AppCompatActivity {
+public class MenuActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-
         // Initializiere Buttons und füge ihnen OnClickListeners hinzu.
         Button playBtn = findViewById(R.id.playBtn);
         Button highscoresBtn = findViewById(R.id.highScoreBtn);
