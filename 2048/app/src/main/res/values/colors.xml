@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#37474F</color>
+    <color name="colorPrimary">#3e474c</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="newGameBtnColor">#FF5722</color>
     <color name="white">#FFFFFF</color>
     <color name="b2">#E3F2FD</color>
-    <color name="b4">#BBDEFB</color>
-    <color name="b8">#90CAF9</color>
+    <color name="b4">#bbdefb</color>
+    <color name="b8">#90caf9</color>
     <color name="b16">#64B5F6</color>
     <color name="b32">#42A5F5</color>
     <color name="b64">#2196F3</color>
     <color name="b128">#1E88E5</color>
     <color name="b256">#1976D2</color>
-    <color name="b512">#1565C0</color>
+    <color name="b512">#185eac</color>
     <color name="b1024">#0D47A1</color>
-    <color name="b2048">#0D47A1</color>
+    <color name="b2048">#081f42</color>
     <color name="b4096">#0D47A1</color>
     <color name="r2">#FFEBEE</color>
     <color name="r4">#FFCDD2</color>
