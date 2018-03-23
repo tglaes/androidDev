@@ -871,10 +871,12 @@ public class GameActivity extends Activity {
          */
         public void restartTimer(){
             time = 0;
-            // Anhalten des alten Tasks.
-            gameTimerTask.cancel();
-            // Entfernen des gestoppten Tasks;
-            timer.purge();
+            if(gameTimerTask != null){
+                // Anhalten des alten Tasks.
+                gameTimerTask.cancel();
+                // Entfernen des gestoppten Tasks;
+                timer.purge();
+            }
             // Neuen Task einreihen.
             gameTimerTask = new GameTimerTask();
             timer.schedule(gameTimerTask,0,1000);
