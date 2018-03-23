@@ -821,12 +821,12 @@ public class GameActivity extends Activity {
             //editor.clear();
             String score = preferences.getString(HighscoreActivity.HIGH_SCORE_KEY + i, "");
                 if(score.isEmpty() || score == null) {
-
-                    editor.putString(HighscoreActivity.HIGH_SCORE_KEY + i, pointsTv.getText().toString());
+                    //Score\n 123123
+                    editor.putString(HighscoreActivity.HIGH_SCORE_KEY + i, pointsTv.getText().toString().substring(7));
                     break;
                 }
                 if(!(preferences.getString(HighscoreActivity.HIGH_SCORE_KEY + 10, "" )).isEmpty()) {
-                    editor.putString(HighscoreActivity.HIGH_SCORE_KEY + 11, pointsTv.getText().toString());
+                    editor.putString(HighscoreActivity.HIGH_SCORE_KEY + 11, pointsTv.getText().toString().substring(7));
                 }
         }
         editor.apply();
