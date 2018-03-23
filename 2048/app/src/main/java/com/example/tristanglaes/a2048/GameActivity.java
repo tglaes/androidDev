@@ -1,9 +1,9 @@
 package com.example.tristanglaes.a2048;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +15,8 @@ import android.widget.Toast;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+
+
 
 public class GameActivity extends AppCompatActivity {
 
@@ -222,6 +224,7 @@ public class GameActivity extends AppCompatActivity {
 
         pointsTv.setText("SCORE: " + String.valueOf(points));
         movesTv.setText("MOVES: " + String.valueOf(numberMoves));
+
     }
 
 
@@ -782,9 +785,23 @@ public class GameActivity extends AppCompatActivity {
 
     private void checkHighscores() {
         //TODO: Eintragen in Highscores.
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(HighscoreActivity.HIGH_SCORE_KEY + "1", pointsTv.getText().toString());
+        //int countKeys = preferences.getAll().size();
+
+        for (int i = 1; i <= 10; i++) {
+            //editor.clear();
+            String score = preferences.getString(HighscoreActivity.HIGH_SCORE_KEY + i, "");
+                if(score.isEmpty() || score == null) {
+
+                    editor.putString(HighscoreActivity.HIGH_SCORE_KEY + i, pointsTv.getText().toString());
+                    break;
+                }
+                if(!(preferences.getString(HighscoreActivity.HIGH_SCORE_KEY + 10, "" )).isEmpty()) {
+                    editor.putString(HighscoreActivity.HIGH_SCORE_KEY + 11, pointsTv.getText().toString());
+                }
+        }
         editor.apply();
     }
 

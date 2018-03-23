@@ -1,17 +1,20 @@
 package com.example.tristanglaes.a2048;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
+import java.util.stream.Collectors;
+import java.util.Arrays;
+
+
 
 public class HighscoreActivity extends AppCompatActivity {
 
@@ -32,21 +35,46 @@ public class HighscoreActivity extends AppCompatActivity {
 
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         highscores = new ArrayList<>();
+        List<Integer> intList = new ArrayList<>();
+        List<String> stringList = new ArrayList<>(intList.size());
 
-        for(int i = 1; i<=10;i++){
+
+        for(int i = 1; i<=11;i++){
+
+
+
 
             String score = sp.getString(HIGH_SCORE_KEY + i, "");
+            //int scoreToInt = Integer.parseInt(score);
             if(score.equals("")){
                 break;
             } else {
-                highscores.add( i + ". " + score);
+                    //highscores.add(i + ". " + score);
+                    highscores.add(score);
+                    //Collections.sort(highscores);
             }
         }
-        if(highscores.isEmpty()){
+        // umwandeln von StringList in IntList
+        for(String numeric : highscores)
+        {
+            intList.add(Integer.parseInt(numeric));
+        }
+        Collections.sort(intList, Collections.reverseOrder());
+        if (intList.size() == 11) {
+            // Entfernt das elfte Element
+            intList.remove(10);
+        }
+        // von IntList zurück in StringList
+        for(Integer myInt : intList) {
+            stringList.add(String.valueOf(myInt));
+        }
+
+        if(stringList.isEmpty()){
             Toast toast = Toast.makeText(getApplicationContext(), "No highscores yet!", Toast.LENGTH_LONG);
             toast.show();
         } else {
-            adapter.addAll(highscores);
+
+            adapter.addAll(stringList);
             highscoreListView.setAdapter(adapter);
         }
     }

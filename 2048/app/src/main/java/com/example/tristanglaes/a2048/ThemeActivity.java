@@ -1,9 +1,9 @@
 package com.example.tristanglaes.a2048;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.widget.RadioGroup;
 
 public class ThemeActivity extends AppCompatActivity {
