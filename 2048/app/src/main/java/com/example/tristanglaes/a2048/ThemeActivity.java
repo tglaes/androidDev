@@ -1,12 +1,12 @@
 package com.example.tristanglaes.a2048;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.RadioGroup;
 
-public class ThemeActivity extends AppCompatActivity {
+public class ThemeActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,19 +22,17 @@ public class ThemeActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = preferences.edit();
 
                 switch (i){
-                    case 2131165223: editor.putString(GameActivity.THEME_KEY, "Blue");
+                    case R.id.blue_theme: editor.putString(GameActivity.THEME_KEY, "Blue");
                         break;
-                    case 2131165221: editor.putString(GameActivity.THEME_KEY, "Violet");
+                    case R.id.black_theme: editor.putString(GameActivity.THEME_KEY, "Violet");
                         break;
-                    case 2131165246: editor.putString(GameActivity.THEME_KEY, "Green");
+                    case R.id.green_theme: editor.putString(GameActivity.THEME_KEY, "Green");
                         break;
-                    case 2131165283: editor.putString(GameActivity.THEME_KEY, "Red");
+                    case R.id.red_theme: editor.putString(GameActivity.THEME_KEY, "Red");
                         break;
                 }
                 editor.apply();
             }
         });
     }
-
-
 }

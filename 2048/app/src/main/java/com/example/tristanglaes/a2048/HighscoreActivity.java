@@ -1,19 +1,17 @@
 package com.example.tristanglaes.a2048;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HighscoreActivity extends AppCompatActivity {
+public class HighscoreActivity extends Activity {
 
     private SharedPreferences sp;
     public static String HIGH_SCORE_KEY = "com.example.tristanglaes.a2048.HIGHSCORE";

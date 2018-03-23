@@ -10,31 +10,45 @@
         android:id="@+id/informationBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/colorPrimary">
 
         <TextView
             android:id="@+id/pointsTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/background_dark" />
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimaryLight"
+            android:gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"/>
 
         <TextView
             android:id="@+id/movesTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/background_dark" />
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimaryLight"
+            android:gravity="center"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"/>
 
         <TextView
             android:id="@+id/timeTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/background_dark" />
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimaryLight"
+            android:gravity="center"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"/>
 
     </LinearLayout>
 
@@ -308,16 +322,19 @@
     <RelativeLayout
         android:id="@+id/buttonsBar"
         android:layout_width="match_parent"
-        android:layout_height="84dp">
+        android:layout_height="84dp"
+        android:background="@color/colorPrimary">
 
         <Button
             android:id="@+id/newGameBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:layout_marginLeft="20dp"
             android:background="@color/newGameBtnColor"
             android:text="@string/new_game"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textAllCaps="false"/>
     </RelativeLayout>
 
 </LinearLayout>

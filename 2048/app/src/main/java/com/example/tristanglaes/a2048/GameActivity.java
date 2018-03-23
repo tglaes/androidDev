@@ -1,10 +1,8 @@
 package com.example.tristanglaes.a2048;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -18,7 +16,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends Activity {
 
     // Keys für die SharedPreferences
     private static String GAME_BOARD_KEY = "com.example.tristanglaes.a2048.GAMEBOARD";
@@ -155,14 +153,23 @@ public class GameActivity extends AppCompatActivity {
         newGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                gameTimer.restartTimer();
+                if(getNumPieces() > 0){
+                    gameTimer.restartTimer();
+                } else {
+                    gameTimer.startTimer();
+                }
                 startNewGame();
             }
         });
 
         // Laden des letzten Spiels
         loadGame();
-        gameTimer.startTimer();
+        // Wenn mindestens ein Stein auf dem Board ist -> starte Timer
+        if(getNumPieces() > 0){
+            gameTimer.startTimer();
+        } else {
+            timeTv.setText("Time\n0:00");
+        }
     }
 
     /**
@@ -222,8 +229,8 @@ public class GameActivity extends AppCompatActivity {
             }
         }
 
-        pointsTv.setText("SCORE: " + String.valueOf(points));
-        movesTv.setText("MOVES: " + String.valueOf(numberMoves));
+        pointsTv.setText("Score\n " + String.valueOf(points));
+        movesTv.setText("Moves\n " + String.valueOf(numberMoves));
     }
 
 
@@ -232,7 +239,9 @@ public class GameActivity extends AppCompatActivity {
      */
     @Override
     protected void onStop() {
-        gameTimer.stopTimer();
+        if(getNumPieces() > 0){
+            gameTimer.stopTimer();
+        }
         super.onStop();
         safeGame();
     }
@@ -242,7 +251,9 @@ public class GameActivity extends AppCompatActivity {
      */
     @Override
     protected void onPause() {
-        gameTimer.stopTimer();
+        if(getNumPieces() > 0){
+            gameTimer.stopTimer();
+        }
         super.onPause();
         safeGame();
     }
@@ -255,7 +266,10 @@ public class GameActivity extends AppCompatActivity {
         super.onResume();
         loadGame();
         updateBoard(board);
-        gameTimer.startTimer();
+        // Wenn mindestens ein Stein auf dem Board ist -> starte Timer
+        if(getNumPieces() > 0){
+            gameTimer.startTimer();
+        }
     }
 
     @Override
@@ -263,7 +277,10 @@ public class GameActivity extends AppCompatActivity {
         super.onRestart();
         loadGame();
         updateBoard(board);
-        gameTimer.startTimer();
+        // Wenn mindestens ein Stein auf dem Board ist -> starte Timer
+        if(getNumPieces() > 0){
+            gameTimer.startTimer();
+        }
     }
 
     /**
@@ -850,7 +867,7 @@ public class GameActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        timeTv.setText("TIME: " + convertTime(time++));
+                        timeTv.setText("Time\n " + convertTime(time++));
                     }
                 });
             }

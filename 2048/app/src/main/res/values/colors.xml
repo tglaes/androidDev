@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#3e474c</color>
+    <color name="colorPrimaryLight">#7D878C</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="newGameBtnColor">#FF5722</color>
@@ -26,7 +27,7 @@
     <color name="r128">#E53935</color>
     <color name="r256">#D32F2F</color>
     <color name="r512">#C62828</color>
-    <color name="r1024">#B71C1C</color>
+    <color name="r1024">#b71c1c</color>
     <color name="r2048">#D50000</color>
     <color name="r4096">#D50000</color>
     <color name="v2">#F3E5F5</color>
