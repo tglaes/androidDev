@@ -2,22 +2,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.tristanglaes.a2048.GameOverFragment"
     android:background="@color/colorPrimary"
+    tools:context="com.example.tristanglaes.a2048.NewGameFragment"
     android:padding="20dp">
 
     <LinearLayout
-        android:id="@+id/gameOverLayout"
+        android:id="@+id/newGameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="5dp">
 
         <TextView
-            android:id="@+id/gameOverTv"
+            android:id="@+id/newGameTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Game Over!\nYour Score: "
+            android:text="Are you sure you want to start a new game?"
             android:textAppearance="@android:style/TextAppearance.Material.Widget"
             android:textSize="18sp"
             android:gravity="center"
@@ -32,7 +32,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/newGameGameOverFrag"
+                android:id="@+id/newGameButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -46,11 +46,11 @@
                 android:layout_marginRight="10dp"/>
 
             <Button
-                android:id="@+id/viewBoardButton"
+                android:id="@+id/cancelNewGameButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="View Board"
+                android:text="Cancel"
                 android:background="@color/b8"
                 android:textSize="16sp"
                 android:textAllCaps="false"
@@ -61,5 +61,4 @@
         </LinearLayout>
 
     </LinearLayout>
-
 </FrameLayout>
