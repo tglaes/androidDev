@@ -48,9 +48,7 @@ public class HighscoreActivity extends Activity {
             if(score.equals("")){
                 break;
             } else {
-                    //highscores.add(i + ". " + score);
                     highscores.add(score);
-                    //Collections.sort(highscores);
             }
         }
         // umwandeln von StringList in IntList
@@ -68,6 +66,10 @@ public class HighscoreActivity extends Activity {
             stringList.add(String.valueOf(myInt));
         }
 
+        for (int j = 1; j <= 10; j++)
+        {
+            sp.edit().putString(HIGH_SCORE_KEY + j, stringList.get(j-1)).apply();
+        }
         if(stringList.isEmpty()){
             Toast toast = Toast.makeText(getApplicationContext(), "No highscores yet!", Toast.LENGTH_LONG);
             toast.show();
