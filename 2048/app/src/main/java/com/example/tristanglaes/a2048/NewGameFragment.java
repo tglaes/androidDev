@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
+public class NewGameFragment extends DialogFragment {
 
-public class GameOverFragment extends DialogFragment {
+    private Button newGame, cancel;
 
-    public GameOverFragment() {
+    public NewGameFragment() {
         // Required empty public constructor
     }
 
@@ -24,32 +24,29 @@ public class GameOverFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_game_over, container, false);
-        final GameActivity ga = (GameActivity) getActivity();
-        Button newGame = v.findViewById(R.id.newGameGameOverFrag);
+        View v = inflater.inflate(R.layout.fragment_new_game, container, false);
+
+        newGame = v.findViewById(R.id.newGameButton);
+        cancel = v.findViewById(R.id.cancelNewGameButton);
+
         newGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                GameActivity ga = (GameActivity) getActivity();
                 ga.startNewGame();
                 ga.gameTimer.restartTimer();
                 dismiss();
             }
         });
 
-        Button viewBoard = v.findViewById(R.id.viewBoardButton);
-        viewBoard.setOnClickListener(new View.OnClickListener() {
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                GameActivity ga = (GameActivity) getActivity();
+                ga.gameTimer.startTimer();
                 dismiss();
             }
         });
-
-        // Füge die Punktzahl in die Meldung ein.
-        TextView gameOverTv = v.findViewById(R.id.gameOverTv);
-        gameOverTv.setText(gameOverTv.getText().toString() + ga.pointsTv.getText().toString().substring(7));
-
-
         return v;
     }
 
@@ -60,6 +57,8 @@ public class GameOverFragment extends DialogFragment {
 
     @Override
     public void onDetach() {
+        GameActivity ga = (GameActivity) getActivity();
+        ga.gameTimer.startTimer();
         super.onDetach();
     }
 }

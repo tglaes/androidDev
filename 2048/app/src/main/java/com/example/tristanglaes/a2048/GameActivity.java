@@ -1,6 +1,7 @@
 package com.example.tristanglaes.a2048;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -10,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Random;
 import java.util.Timer;
@@ -32,7 +32,7 @@ public class GameActivity extends Activity {
     private TableLayout tl;
 
     // TextViews welche die GUI für Punkte, Spielzüge und Spielzeit ist.
-    private static TextView pointsTv, movesTv, timeTv;
+    public static TextView pointsTv, movesTv, timeTv;
     // Das intere Spielfeld.
     private int board[][];
     // Die Breite des Boards.
@@ -50,8 +50,9 @@ public class GameActivity extends Activity {
     // Randomklasse zum berechnen der neuen Spielsteine und deren Position.
     private Random rand;
     // Spieltimer
-    private GameTimer gameTimer;
+    public GameTimer gameTimer;
     private String theme;
+    private FragmentManager fm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,7 @@ public class GameActivity extends Activity {
         gameTimer = new GameTimer();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
         theme = preferences.getString(THEME_KEY,"Blue");
-
+        fm = getFragmentManager();
 
         tl.setOnTouchListener(new View.OnTouchListener() {
 
@@ -155,11 +156,19 @@ public class GameActivity extends Activity {
             @Override
             public void onClick(View view) {
                 if(getNumPieces() > 0){
-                    gameTimer.restartTimer();
+                    if(isMovePossible()){
+                        gameTimer.stopTimer();
+                        // Den Benutzer fragen, ob er wirklich ein neues Spiel starten will.
+                        NewGameFragment ngf = new NewGameFragment();
+                        ngf.show(fm,"newGameFragment");
+                    } else {
+                        startNewGame();
+                        gameTimer.restartTimer();
+                    }
                 } else {
+                    startNewGame();
                     gameTimer.startTimer();
                 }
-                startNewGame();
             }
         });
 
@@ -189,16 +198,17 @@ public class GameActivity extends Activity {
         addPiece();
         updateBoard(board);
         if (!isMovePossible()) {
-            // Spiel ist zuende.
+            // Timer stoppen.
             gameTimer.stopTimer();
-            Toast toast = Toast.makeText(getApplicationContext(), "YOU LOST!", Toast.LENGTH_LONG);
-            toast.show();
-            //TODO: RUFE SPiel verloren auf.
+            // Die Punktzahl in die Highscores eintragen.
             checkHighscores();
-        } else {
-            //TODO: Checke ob der Spieler einen 2048 Stein hat -> Anzeigen des Gewonnenbildschirm und fragen ob er weiterspielen will.
-            //TODO: Wenn er neues Spiel wählt Highscores.
-        }
+            // Den GameOVer Bildschirm anzeigen.
+            GameOverFragment gof = new GameOverFragment();
+            gof.show(fm,"gameOverFragment");
+        }/* else {
+            Alternativ überprüfen ob der Spieler die 2048 erreicht hat.
+
+        }*/
     }
 
     /**
@@ -794,7 +804,7 @@ public class GameActivity extends Activity {
     /**
      * Startet ein neues Spiel, indem alle Variabeln zurückgesetzt werden.
      */
-    private void startNewGame() {
+    public void startNewGame() {
 
         time = 0;
         timeTv.setText("TIME: 0:00");
@@ -832,7 +842,7 @@ public class GameActivity extends Activity {
         editor.apply();
     }
 
-    private class GameTimer {
+    class GameTimer {
 
         private Timer timer;
         private GameTimerTask gameTimerTask;
