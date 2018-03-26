@@ -12,9 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
 
-
-
-
 public class HighscoreActivity extends Activity {
 
     private SharedPreferences sp;
@@ -36,8 +33,6 @@ public class HighscoreActivity extends Activity {
         highscores = new ArrayList<>();
         List<Integer> intList = new ArrayList<>();
         List<String> stringList = new ArrayList<>(intList.size());
-        List<String> stringListCopy = new ArrayList<>();
-
 
         // Füge Highscores aus S.P in Liste ein
         for(int i = 1; i<=11;i++){
@@ -47,19 +42,6 @@ public class HighscoreActivity extends Activity {
                 break;
             } else {
                     highscores.add(score);
-
-                /*
-                sp.edit().putString(HIGH_SCORE_KEY +1, "1600").apply();
-                sp.edit().putString(HIGH_SCORE_KEY +2, "1538").apply();
-                sp.edit().putString(HIGH_SCORE_KEY +3, "1400").apply();
-                sp.edit().putString(HIGH_SCORE_KEY +4, "1100").apply();
-                sp.edit().putString(HIGH_SCORE_KEY +5, "900").apply();
-                sp.edit().putString(HIGH_SCORE_KEY +6, "700").apply();
-                sp.edit().putString(HIGH_SCORE_KEY +7, "500").apply();
-                sp.edit().putString(HIGH_SCORE_KEY +8, "600").apply();
-                sp.edit().putString(HIGH_SCORE_KEY +9, "650").apply();
-                sp.edit().putString(HIGH_SCORE_KEY +10, "767").apply();
-                */
             }
         }
 
@@ -88,27 +70,17 @@ public class HighscoreActivity extends Activity {
                 sp.edit().putString(HIGH_SCORE_KEY + 11, "0").apply();
             }
         }
-        /*
-        // StringList erweitern um 1. Platz, 2. Platz ...
-        stringListCopy.clear();
-        int stringListSize = stringList.size();
-        for (int k = 0; k <= stringListSize; k++)
-        {
-            if(!(stringList.get(k) == null || stringListSize ==0)) {
-                stringListCopy.add(k, k + 1 + ". " + stringList.get(k));
-            }
-            //String strScore = stringList.get(k);
-            /*
-            strScore = k+1 + ". " + strScore;
-            stringList.remove(0);
-            stringList.add(strScore);
 
-        }
-        */
         if(stringList.isEmpty()){
             Toast toast = Toast.makeText(getApplicationContext(), "No highscores yet!", Toast.LENGTH_LONG);
             toast.show();
         } else {
+
+            // Die Stelle des Highscores anzeigen.
+            for(int i = 0; i < stringList.size(); i++){
+
+                stringList.set(i,(i + 1) + ". " + stringList.get(i));
+            }
 
             adapter.addAll(stringList);
             highscoreListView.setAdapter(adapter);
