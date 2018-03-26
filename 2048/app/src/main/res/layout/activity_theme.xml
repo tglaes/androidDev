@@ -18,37 +18,59 @@
         <RadioButton
             android:id="@+id/blue_theme"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/b8"
             android:text="@string/blue_theme"
             android:textAlignment="center"
-            android:textColor="@color/b2048"/>
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:textSize="36sp"
+            android:layout_margin="20dp"
+            android:layout_marginVertical="10dp"
+            />
+
 
         <RadioButton
 
             android:id="@+id/black_theme"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/v8"
             android:text="@string/violet_theme"
             android:textAlignment="center"
-            android:textColor="@color/v2048"/>
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:textSize="36sp"
+            android:layout_margin="20dp"
+            android:layout_marginVertical="10dp"/>
 
         <RadioButton
 
             android:id="@+id/green_theme"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/g8"
             android:text="@string/green_theme"
             android:textAlignment="center"
-            android:textColor="@color/g2048"/>
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:textSize="36sp"
+            android:layout_margin="20dp"
+            android:layout_marginVertical="10dp"/>
 
         <RadioButton
 
             android:id="@+id/red_theme"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/r8"
             android:text="@string/red_theme"
             android:textAlignment="center"
-            android:textColor="@color/r2048" />
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:textSize="36sp"
+            android:layout_margin="20dp"
+            android:layout_marginVertical="10dp"/>
 
     </RadioGroup>
 
