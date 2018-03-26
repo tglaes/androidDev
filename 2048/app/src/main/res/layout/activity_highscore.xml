@@ -3,11 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context="com.example.tristanglaes.a2048.HighscoreActivity"
     android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/topTen"
+        android:layout_width="match_parent"
+        android:layout_height="59dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:text="TOP 10 "
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+
 
     <ListView
         android:id="@+id/highscoreListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:background="@color/b8"/>
+
 </LinearLayout>

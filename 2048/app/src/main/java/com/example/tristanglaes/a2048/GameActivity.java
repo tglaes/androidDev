@@ -821,14 +821,10 @@ public class GameActivity extends Activity {
     }
 
     private void checkHighscores() {
-        //TODO: Eintragen in Highscores.
-
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
         SharedPreferences.Editor editor = preferences.edit();
-        //int countKeys = preferences.getAll().size();
 
         for (int i = 1; i <= 10; i++) {
-            //editor.clear();
             String score = preferences.getString(HighscoreActivity.HIGH_SCORE_KEY + i, "");
                 if(score.isEmpty() || score == null) {
                     //Score\n 123123
