@@ -820,6 +820,9 @@ public class GameActivity extends Activity {
         updateBoard(board);
     }
 
+    /**
+     * Methode zum einfügen der Highscores in die Shared Prefereces
+     */
     private void checkHighscores() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
         SharedPreferences.Editor editor = preferences.edit();

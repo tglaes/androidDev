@@ -36,8 +36,10 @@ public class HighscoreActivity extends Activity {
         highscores = new ArrayList<>();
         List<Integer> intList = new ArrayList<>();
         List<String> stringList = new ArrayList<>(intList.size());
+        List<String> stringListCopy = new ArrayList<>();
 
 
+        // Füge Highscores aus S.P in Liste ein
         for(int i = 1; i<=11;i++){
 
             String score = sp.getString(HIGH_SCORE_KEY + i, "");
@@ -49,7 +51,6 @@ public class HighscoreActivity extends Activity {
                 /*
                 sp.edit().putString(HIGH_SCORE_KEY +1, "1600").apply();
                 sp.edit().putString(HIGH_SCORE_KEY +2, "1538").apply();
-
                 sp.edit().putString(HIGH_SCORE_KEY +3, "1400").apply();
                 sp.edit().putString(HIGH_SCORE_KEY +4, "1100").apply();
                 sp.edit().putString(HIGH_SCORE_KEY +5, "900").apply();
@@ -72,15 +73,14 @@ public class HighscoreActivity extends Activity {
             // Entfernt das elfte (kleinste) Element
             intList.remove(10);
         }
+
         // von IntList zurück in StringList
-        int index = 0;
         for(Integer myInt : intList) {
             //stringList.add(index++ + ". " + String.valueOf(myInt));
             stringList.add(String.valueOf(myInt));
         }
 
-
-        // StringList wird zurück in SP geschrieben
+        // StringList wird sortiert zurück in SP geschrieben
         for (int j = 1; j <= 10; j++)
         {
             if(!(sp.getString(HIGH_SCORE_KEY + 11, "").isEmpty())) {
@@ -90,10 +90,15 @@ public class HighscoreActivity extends Activity {
         }
         /*
         // StringList erweitern um 1. Platz, 2. Platz ...
-
-        for (int k = 0; k <= 9; k++)
+        stringListCopy.clear();
+        int stringListSize = stringList.size();
+        for (int k = 0; k <= stringListSize; k++)
         {
-            String strScore = stringList.get(k);
+            if(!(stringList.get(k) == null || stringListSize ==0)) {
+                stringListCopy.add(k, k + 1 + ". " + stringList.get(k));
+            }
+            //String strScore = stringList.get(k);
+            /*
             strScore = k+1 + ". " + strScore;
             stringList.remove(0);
             stringList.add(strScore);
