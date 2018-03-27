@@ -16,6 +16,9 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/***
+ * @author Tristan Glaes, Tom Scholer
+ */
 public class GameActivity extends Activity {
 
 

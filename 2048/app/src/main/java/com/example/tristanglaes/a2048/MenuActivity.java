@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+/**
+ * @author Tristan Glaes, Tom Scholer, Peter Hennen
+ */
 public class MenuActivity extends Activity {
 
     @Override

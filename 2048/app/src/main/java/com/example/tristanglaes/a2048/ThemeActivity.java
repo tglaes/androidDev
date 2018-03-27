@@ -7,6 +7,9 @@ import android.preference.PreferenceManager;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+/**
+ * @author Tom Scholer, Peter Hennen, Tristan Glaes
+ */
 public class ThemeActivity extends Activity {
 
     @Override

@@ -9,7 +9,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-
+/**
+ * @author Tristan Glaes
+ */
 public class GameOverFragment extends DialogFragment {
 
     public GameOverFragment() {

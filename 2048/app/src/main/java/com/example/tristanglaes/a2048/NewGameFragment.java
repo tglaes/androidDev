@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+/**
+ * @author Tristan Glaes
+ */
 public class NewGameFragment extends DialogFragment {
 
     private Button newGame, cancel;

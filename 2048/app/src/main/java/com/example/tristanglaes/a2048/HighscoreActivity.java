@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
 
+/**
+ * @author Iurie Golovencic, Meris Krupic, Tristan Glaes
+ */
 public class HighscoreActivity extends Activity {
 
     private SharedPreferences sp;
